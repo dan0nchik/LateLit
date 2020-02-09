@@ -1,0 +1,6 @@
+framework module Pods_LateLit {
+  umbrella header "Pods-LateLit-umbrella.h"
+
+  export *
+  module * { export * }
+}

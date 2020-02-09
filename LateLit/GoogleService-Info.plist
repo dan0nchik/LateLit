@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>155740802915-10dtamgsk906d0edthdtv8lt89scubn2.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.155740802915-10dtamgsk906d0edthdtv8lt89scubn2</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>155740802915-b0o6n0alkkibtjuqav9r3uoigpmidlfm.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDfGFF0yvdlgoq1i9TFQ1n4tdz3dFWzuzo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>155740802915</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.danonchik.LateLit</string>
+	<key>PROJECT_ID</key>
+	<string>latelit</string>
+	<key>STORAGE_BUCKET</key>
+	<string>latelit.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:155740802915:ios:30227fae1e5dc373628d56</string>
+	<key>DATABASE_URL</key>
+	<string>https://latelit.firebaseio.com</string>
+</dict>
+</plist>
