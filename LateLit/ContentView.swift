@@ -38,8 +38,11 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 struct LateButton: View {
+    @State public var showMessage = false
     var body: some View {
-        Button(action:{}) {
+        Button(action:{
+            self.showMessage.toggle()
+        }) {
             Text("Я опоздаю")
                 .fontWeight(.semibold)
                 .foregroundColor(Color(.white))
@@ -49,6 +52,9 @@ struct LateButton: View {
                 .shadow(color: Color("Color"), radius: 10)
             
         }
+    .sheet(isPresented: $showMessage, content: {
+        Message()
+    })
     }
 }
 
