@@ -14,7 +14,7 @@
 		692C4BCD23F0AF7B00086D6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 692C4BCC23F0AF7B00086D6C /* Assets.xcassets */; };
 		692C4BD323F0AF7B00086D6C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 692C4BD123F0AF7B00086D6C /* LaunchScreen.storyboard */; };
 		697296D023F327FD0093B640 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697296CF23F327FD0093B640 /* Message.swift */; };
-		6992FF8E23F0B2B4003A40ED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6992FF8D23F0B2B4003A40ED /* GoogleService-Info.plist */; };
+		69F82C7623F4123B00A12E67 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 69F82C7523F4123B00A12E67 /* GoogleService-Info.plist */; };
 		E22C463A6AF0687D1AF3D60D /* Pods_LateLit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9176DAAC0E87A526F8BD2B56 /* Pods_LateLit.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,7 +28,7 @@
 		692C4BD223F0AF7B00086D6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		692C4BD423F0AF7B00086D6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		697296CF23F327FD0093B640 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		6992FF8D23F0B2B4003A40ED /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		69F82C7523F4123B00A12E67 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9176DAAC0E87A526F8BD2B56 /* Pods_LateLit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LateLit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		99334024EE5B35BA78DCC49A /* Pods-LateLit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LateLit.debug.xcconfig"; path = "Target Support Files/Pods-LateLit/Pods-LateLit.debug.xcconfig"; sourceTree = "<group>"; };
 		B5EF18E0E98FDE04E03719AA /* Pods-LateLit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LateLit.release.xcconfig"; path = "Target Support Files/Pods-LateLit/Pods-LateLit.release.xcconfig"; sourceTree = "<group>"; };
@@ -75,7 +75,7 @@
 				692C4BCC23F0AF7B00086D6C /* Assets.xcassets */,
 				692C4BD123F0AF7B00086D6C /* LaunchScreen.storyboard */,
 				692C4BD423F0AF7B00086D6C /* Info.plist */,
-				6992FF8D23F0B2B4003A40ED /* GoogleService-Info.plist */,
+				69F82C7523F4123B00A12E67 /* GoogleService-Info.plist */,
 			);
 			path = LateLit;
 			sourceTree = "<group>";
@@ -158,8 +158,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				692C4BD323F0AF7B00086D6C /* LaunchScreen.storyboard in Resources */,
-				6992FF8E23F0B2B4003A40ED /* GoogleService-Info.plist in Resources */,
 				692C4BCD23F0AF7B00086D6C /* Assets.xcassets in Resources */,
+				69F82C7623F4123B00A12E67 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

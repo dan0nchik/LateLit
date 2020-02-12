@@ -7,10 +7,43 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct Account: View {
+    @State var email = ""
+    @State var pass = ""
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack{
+        TextField("Email", text: $email)
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+        TextField("Пароль", text: $pass)
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+    
+        HStack
+            {
+            Button(action: {
+                Auth.auth().signIn(withEmail: self.email, password: self.pass) {
+                    (res, err) in
+                    if err != nil{
+                        print((err!.localizedDescription))
+                    }
+                }
+            }, label: {
+                Text("Войти")
+            })
+            Button(action: {
+                Auth.auth().createUser(withEmail: self.email, password: self.pass){
+                    (res, err) in
+                    if err != nil{
+                        print((err!.localizedDescription))
+                    }
+                }
+            }, label: {
+                Text("Зарегистрироваться")
+            })
+        }
+    }
     }
 }
 

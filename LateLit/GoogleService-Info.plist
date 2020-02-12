@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:155740802915:ios:30227fae1e5dc373628d56</string>
+	<string>1:155740802915:ios:d29e7c4963c8685a628d56</string>
 	<key>DATABASE_URL</key>
 	<string>https://latelit.firebaseio.com</string>
 </dict>
