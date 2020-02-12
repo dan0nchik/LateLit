@@ -24,7 +24,7 @@ struct ContentView: View {
                 }
             
         .navigationBarTitle("LateLit")
-        .navigationBarItems(trailing: NavigationLink(destination: Account(), label: {
+        .navigationBarItems(trailing: NavigationLink(destination: SignIn(), label: {
             AccountImage()
         }))
         }
