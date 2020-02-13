@@ -15,9 +15,7 @@ struct SignIn: View {
     @State var name = ""
     @State var surname = ""
     @State var empty = true
-    @State var error = false
     @ObservedObject var signed = Settings()
-    
     let ref = Database.database().reference(withPath: "Users")
     var body: some View {
             
@@ -29,9 +27,9 @@ struct SignIn: View {
         .font(.largeTitle)
         .bold()
         TextField("Имя", text: $name)
-        .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         TextField("Фамилия", text: $surname)
-        .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         TextField("Email", text: $email)
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         SecureField("Пароль", text: $pass)
@@ -47,18 +45,11 @@ struct SignIn: View {
                 
                     if err != nil
                     {
-                        self.error = true
-                        self.signed.Sign = false
-                        _ = self.alert(isPresented: self.$error , content: {
-                            Alert(title: Text(err!.localizedDescription), message: Text("Try again"), dismissButton: .default(Text("OK")))
-                        })
-                        
+                        print((err!.localizedDescription))
                         
                     }
-                    else{
                     self.signed.Sign = true
-                        
-                        }
+                    
                 }
             }) {
                 
@@ -78,18 +69,12 @@ struct SignIn: View {
                     (res, err) in
                     if err != nil
                     {
-                        self.error = true
-                        self.signed.Sign = false
-                        _ = self.alert(isPresented: self.$error, content: {
-                            Alert(title: Text(err!.localizedDescription), message: Text("Try again"), dismissButton: .default(Text("OK")))
-                        })
-                        
+                        print((err!.localizedDescription))
                     }
-                    else{
+                    let userID = Auth.auth().currentUser?.uid
+                    self.ref.child(userID ?? "Not set").setValue(["email" : self.email, "name": self.name, "password": self.pass, "role":"user", "surname":self.surname])
                     self.signed.Sign = true
-                        let userId = Auth.auth().currentUser?.uid
-                        self.ref.child(userId!).setValue(["email": self.email, "name": self.name, "password": self.pass, "role" : "user", "surname" : self.surname])
-                }
+                    
                 }
                
             }, label: {

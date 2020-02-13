@@ -41,7 +41,7 @@ struct LateButton: View {
     @State public var showMessage = false
     var body: some View {
         Button(action:{
-            self.showMessage.toggle()
+            self.showMessage = true
         }) {
             Text("Я опоздаю")
                 .fontWeight(.semibold)

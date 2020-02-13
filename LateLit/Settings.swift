@@ -7,12 +7,13 @@
 //
 
 import Foundation
-
+import Firebase
 class Settings: ObservableObject {
     @Published var Sign: Bool = UserDefaults.standard.bool(forKey: "Sign")
         {
         didSet{
             UserDefaults.standard.set(Sign, forKey: "Sign")
+            
         }
     }
 }
