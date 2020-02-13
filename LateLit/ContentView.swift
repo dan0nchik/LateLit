@@ -10,7 +10,7 @@ import SwiftUI
 
 
 struct ContentView: View {
-    
+    @State private var showMessageView = false
     var body: some View {
         NavigationView
             {
@@ -38,10 +38,10 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 struct LateButton: View {
-    @State public var showMessage = false
+    @State public var show = false
     var body: some View {
         Button(action:{
-            self.showMessage = true
+            self.show = true
         }) {
             Text("Я опоздаю")
                 .fontWeight(.semibold)
@@ -52,8 +52,8 @@ struct LateButton: View {
                 .shadow(color: Color("Color"), radius: 10)
             
         }
-    .sheet(isPresented: $showMessage, content: {
-        Message()
+    .sheet(isPresented: $show, content: {
+        Message(showMessageView: self.$show)
     })
     }
 }
