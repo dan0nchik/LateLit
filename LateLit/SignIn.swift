@@ -72,7 +72,7 @@ struct SignIn: View {
                         print((err!.localizedDescription))
                     }
                     let userID = Auth.auth().currentUser?.uid
-                    self.ref.child(userID ?? "Not set").setValue(["email" : self.email, "name": self.name, "password": self.pass, "role":"user", "surname":self.surname])
+                    self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "password": self.pass, "role":"user", "surname":self.surname])
                     self.signed.Sign = true
                     
                 }
