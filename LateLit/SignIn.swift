@@ -15,6 +15,8 @@ struct SignIn: View {
     @State var name = ""
     @State var surname = ""
     @State var empty = true
+    @State var showAlert = false
+    @State var alertText: String = ""
     @ObservedObject var signed = Settings()
     let ref = Database.database().reference(withPath: "Users")
     var body: some View {
@@ -34,8 +36,6 @@ struct SignIn: View {
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         SecureField("Пароль", text: $pass)
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
-                    
-        
                     HStack{
                 Button(action: {
                     
@@ -46,10 +46,12 @@ struct SignIn: View {
                     if err != nil
                     {
                         print((err!.localizedDescription))
-                        
+                        self.alertText = err!.localizedDescription
+                        self.showAlert = true
                     }
+                    else{
                     self.signed.Sign = true
-                    
+                        }
                 }
             }) {
                 
@@ -58,11 +60,14 @@ struct SignIn: View {
                     .padding()
                     .background(Color("Color"))
                     .shadow(color: Color("Color"), radius: 10)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.white)
                     .cornerRadius(20.0)
-                    
+                    .disabled(email.isEmpty || pass.isEmpty)
                     }
-                .disabled(email.isEmpty || pass.isEmpty)
+                        .alert(isPresented: $showAlert, content: {
+                            Alert(title: Text("Ошибка входа"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed.Sign = false})
+                        })
+                
                 
             Button(action: {
                 Auth.auth().createUser(withEmail: self.email, password: self.pass){
@@ -70,14 +75,17 @@ struct SignIn: View {
                     if err != nil
                     {
                         print((err!.localizedDescription))
+                        self.alertText = err!.localizedDescription
+                        self.showAlert = true
                     }
+                    else{
                     let userID = Auth.auth().currentUser?.uid
                     self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "password": self.pass, "role":"user", "surname":self.surname])
                     self.signed.Sign = true
-                    
+                    }
                 }
                
-            }, label: {
+            }) {
                 Text("Зарегистрироваться")
                     .fontWeight(.medium)
                 .padding()
@@ -85,9 +93,14 @@ struct SignIn: View {
                 .shadow(color: Color("Color"), radius: 10)
                 .foregroundColor(.white)
                 .cornerRadius(20.0)
-                
-                })
                 .disabled(email.isEmpty || pass.isEmpty)
+                }
+                
+                        .alert(isPresented: $showAlert, content: {
+                            Alert(title: Text("Ошибка регистрации"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed.Sign = false})
+                        })
+                
+               
                     }
                     
                 Image("account")

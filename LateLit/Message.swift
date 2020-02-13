@@ -12,16 +12,17 @@ import FirebaseAuth
 struct Message: View {
     var subjects = ["ООП", "Алгебра", "Биология", "География", "Английский", "ТОИ", "История", "Литература", "Обществознание", "Русский", "Технология", "Физика", "Физ-ра", "Химия"]
     @State private var selectedSubject = 0
-    @State var subjectToSend = ""
+    @State var subjectToSend = " "
     @State var numOfSubjectToSend = 0
     @State private var numOfSub = 0
     @State private var reason = ""
-    @State private var name = ""
-    @State private var surname = ""
+    @State private var name = " "
+    @State private var surname = " "
     @State private var showingAlert = false
     @State private var showingAlertAgain = true
     @Binding var showMessageView: Bool
     let ref = Database.database().reference(withPath: "Users")
+    let lateList = Database.database().reference(withPath: "late_list")
     var body: some View {
         
         NavigationView{
@@ -29,21 +30,24 @@ struct Message: View {
             Text("Отправка сообщения")
                 .font(.title)
                 .bold()
-            Picker(selection: $selectedSubject, label: Text("Выберите предмет")){
+           
+            Picker(selection: $selectedSubject, label: Text("Предмет")){
                 ForEach(0 ..< subjects.count){ index in
                     Text(self.subjects[index]).tag(index).contrast(5)
                     
                 }
             }
+            .padding(.trailing)
             
                 Picker(selection: $numOfSub, label: Text("Номер урока")){
-                ForEach(0 ..< 8){ index in
+                ForEach(1 ..< 8){ index in
                     Text("\(index)").tag(index).contrast(5)
                 }
                 }
-            
+                .padding(.trailing)
             
             TextField("Причина", text: $reason)
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
             Button(action: {
                 self.subjectToSend = self.subjects[self.selectedSubject]
                 self.numOfSubjectToSend = self.numOfSub
@@ -60,6 +64,7 @@ struct Message: View {
             })
                 print(self.name)
                 print(self.surname)
+                print(self.numOfSubjectToSend+1)
                 if(self.showingAlertAgain == true){
                 self.showingAlert = true
                 }
@@ -69,13 +74,38 @@ struct Message: View {
                 })
             {
                 Text("Отправить")
-                Spacer()
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .background(Color("Color"))
+                    .cornerRadius(5)
+                    .padding(90)
+                    .mask(Rectangle())
+                
         }
+            
+            Spacer()
             .alert(isPresented: $showingAlert)
             {
                 Alert(title: Text("Отправить?"), message: Text("Нажмите отправить еще раз и все проверьте"), dismissButton: .default(Text("OK")){
                     self.showingAlert = false
                     self.showingAlertAgain = false
+                    //formt date
+                    let currentDate = Date()
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "dd_M_yyyy"
+                    let timeToString = formatter.string(from: currentDate)
+                    let timestamp = Date().currentTimeMillis()
+                    print(timestamp)
+                    
+                    self.lateList.observeSingleEvent(of: .value, with: {(snapshot) in
+                        if snapshot.hasChild("\(timeToString)") {
+                            self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend) \(self.subjectToSend)", "name": self.name, "reason": self.reason, "surname" : self.surname])
+                        }
+                        else{
+                            self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend) \(self.subjectToSend)", "name": self.name, "reason": self.reason, "surname" : self.surname])
+                        }
+                    })
+                     
                     })
             }
     }
@@ -88,5 +118,10 @@ struct Message: View {
 struct Message_Previews: PreviewProvider {
     static var previews: some View {
         Message(showMessageView: .constant(true))
+    }
+}
+extension Date {
+    func currentTimeMillis() -> Int64 {
+        return Int64(self.timeIntervalSince1970 * 1000)
     }
 }
