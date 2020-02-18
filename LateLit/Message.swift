@@ -26,9 +26,10 @@ struct Message: View {
     var body: some View {
         
         NavigationView{
+            ScrollView {
         VStack{
             Text("Отправка сообщения")
-                .font(.title)
+                .font(.body)
                 .bold()
            
             Picker(selection: $selectedSubject, label: Text("Предмет")){
@@ -37,17 +38,18 @@ struct Message: View {
                     
                 }
             }
-            .padding(.trailing)
+            
             
                 Picker(selection: $numOfSub, label: Text("Номер урока")){
                 ForEach(1 ..< 8){ index in
                     Text("\(index)").tag(index).contrast(5)
                 }
                 }
-                .padding(.trailing)
+               
             
             TextField("Причина", text: $reason)
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+            
             Button(action: {
                 self.subjectToSend = self.subjects[self.selectedSubject]
                 self.numOfSubjectToSend = self.numOfSub
@@ -74,16 +76,16 @@ struct Message: View {
                 })
             {
                 Text("Отправить")
-                    .font(.title)
+                    .font(.body)
                     .foregroundColor(.white)
                     .background(Color("Color"))
                     .cornerRadius(5)
-                    .padding(90)
+                    .padding()
                     .mask(Rectangle())
-                
+                       
         }
-            
-            Spacer()
+             Spacer()
+        }
             .alert(isPresented: $showingAlert)
             {
                 Alert(title: Text("Отправить?"), message: Text("Нажмите отправить еще раз и все проверьте"), dismissButton: .default(Text("OK")){
@@ -123,5 +125,10 @@ struct Message_Previews: PreviewProvider {
 extension Date {
     func currentTimeMillis() -> Int64 {
         return Int64(self.timeIntervalSince1970 * 1000)
+    }
+}
+extension UIApplication {
+    func endEditing() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

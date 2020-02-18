@@ -80,7 +80,7 @@ struct SignIn: View {
                     }
                     else{
                     let userID = Auth.auth().currentUser?.uid
-                    self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "password": self.pass, "role":"user", "surname":self.surname])
+                    self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role":"user", "surname":self.surname])
                     self.signed.Sign = true
                     }
                 }
