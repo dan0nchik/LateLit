@@ -17,14 +17,18 @@ struct SignIn: View {
     @State var empty = true
     @State var showAlert = false
     @State var alertText: String = ""
+    @State var roles = ["Ученик", "Учитель"]
+    @State var selector = 0
+    @State var selectedRole = ""
+    @State var roleToSend = ""
+    @Binding var showThisView: Bool
     @ObservedObject var signed = Settings()
     let ref = Database.database().reference(withPath: "Users")
     var body: some View {
             
-            
+        ScrollView{
             VStack {
-                if(self.signed.Sign == false)
-                {
+                
         Text("Ваш аккаунт")
         .font(.largeTitle)
         .bold()
@@ -36,6 +40,13 @@ struct SignIn: View {
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         SecureField("Пароль", text: $pass)
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+                    Picker("Роль", selection: $selector){
+                        ForEach(0 ..< roles.count){
+                            index in Text(self.roles[index]).tag(index)
+                        }
+                    }.pickerStyle(SegmentedPickerStyle())
+                    
+                    
                     HStack{
                 Button(action: {
                     
@@ -51,6 +62,9 @@ struct SignIn: View {
                     }
                     else{
                     self.signed.Sign = true
+                    self.showThisView = false
+                    self.selectedRole = self.roles[self.selector]
+                    self.signed.Access = self.roleToSend
                         }
                 }
             }) {
@@ -79,9 +93,18 @@ struct SignIn: View {
                         self.showAlert = true
                     }
                     else{
+                        
+                        self.selectedRole = self.roles[self.selector]
+                        if(self.selectedRole == "Ученик"){
+                            self.roleToSend = "user"
+                        }else{
+                            self.roleToSend = "admin"
+                        }
                     let userID = Auth.auth().currentUser?.uid
-                    self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role":"user", "surname":self.surname])
+                        self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.roleToSend, "surname":self.surname])
                     self.signed.Sign = true
+                    self.signed.Access = self.roleToSend
+                    self.showThisView = false
                     }
                 }
                
@@ -107,38 +130,16 @@ struct SignIn: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                  Spacer()
-                }
-               
                 
-                else{
-                    Text("Вы успешно вошли :)")
-                        .font(.largeTitle)
-                        .bold()
-                    Image("nice")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    
-                    Button(action: {
-                        let fireBaseAuth = Auth.auth()
-                        self.signed.Sign = false
-                        do{
-                            try fireBaseAuth.signOut()
-                        }
-                        catch let signOutError as NSError{
-                            print(signOutError)
-                        }
-                    }){
-                        Text("Выйти")
-                    }
-                    Spacer()
-                }
+                
     }
+        }
     }
-
+}
 
 struct SignIn_Previews: PreviewProvider {
     static var previews: some View {
-        SignIn()
+        SignIn(showThisView: .constant(true))
     }
 }
-}
+

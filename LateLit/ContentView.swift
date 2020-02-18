@@ -10,24 +10,21 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State private var showMessageView = false
+    
+    @ObservedObject var signed = Settings()
+    @State public var showSignIn = false
+    
     var body: some View {
-        NavigationView
-            {
-            
-        VStack
-            {
-             Spacer()
-                LateButton()
-            Spacer()
-                HurryImage()
-                }
-            
-        .navigationBarTitle("LateLit")
-        .navigationBarItems(trailing: NavigationLink(destination: SignIn(), label: {
-            AccountImage()
-        }))
-        }
+        NavigationView{
+            Text(" ")
+        } .onAppear(perform: {
+            if(self.signed.Sign == false){
+            self.showSignIn = true
+            }
+        })
+            .sheet(isPresented: self.$showSignIn, content: {
+                SignIn(showThisView: self.$showSignIn)
+        })
     }
 }
                 
@@ -36,12 +33,11 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
 struct LateButton: View {
-    @State public var show = false
+    @State public var showMessageView = false
     var body: some View {
         Button(action:{
-            self.show = true
+            self.showMessageView = true
         }) {
             Text("Я опоздаю")
                 .fontWeight(.semibold)
@@ -52,8 +48,8 @@ struct LateButton: View {
                 .shadow(color: Color("Color"), radius: 10)
             
         }
-    .sheet(isPresented: $show, content: {
-        Message(showMessageView: self.$show)
+    .sheet(isPresented: $showMessageView, content: {
+        Message(showMessageView: self.$showMessageView)
     })
     }
 }

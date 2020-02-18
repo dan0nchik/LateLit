@@ -10,10 +10,11 @@ import Foundation
 import Firebase
 class Settings: ObservableObject {
     @Published var Sign: Bool = UserDefaults.standard.bool(forKey: "Sign")
+    @Published var Access: String = UserDefaults.standard.string(forKey: "Access") ?? "Not set"
         {
         didSet{
-            UserDefaults.standard.set(Sign, forKey: "Sign")
-            
+            UserDefaults.standard.set($Sign, forKey: "Sign")
+            UserDefaults.standard.set($Access, forKey: "Access")
         }
     }
 }
