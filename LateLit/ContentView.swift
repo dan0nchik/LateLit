@@ -13,20 +13,39 @@ struct ContentView: View {
     
     @ObservedObject var signed = Settings()
     @State public var showSignIn = false
-    
     var body: some View {
         NavigationView{
-            Text(" ")
-        } .onAppear(perform: {
-            if(self.signed.Sign == false){
-            self.showSignIn = true
+            if(self.signed.Access == "user"){
+                VStack
+                    {
+                     Spacer()
+                        LateButton()
+                    Spacer()
+                        HurryImage()
+                        }
+                .navigationBarTitle("LateLit")
+                .navigationBarItems(trailing: NavigationLink(destination: Account(), label: {
+                    AccountImage()
+                }))
             }
+            else{
+                Text("Teacher")
+            }
+        }.onAppear(perform: {
+            print("Signed: \(self.signed.Sign)")
+            if(self.signed.Sign != true){
+                self.showSignIn = true
+            }
+            if(self.signed.Sign == true){
+                self.showSignIn = false
+            }
+            
+        }).sheet(isPresented: $showSignIn, content: {
+            SignIn(showThisView: self.$showSignIn)
         })
-            .sheet(isPresented: self.$showSignIn, content: {
-                SignIn(showThisView: self.$showSignIn)
-        })
+        
     }
-}
+    }
                 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

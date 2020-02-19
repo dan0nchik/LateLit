@@ -61,10 +61,18 @@ struct SignIn: View {
                         self.showAlert = true
                     }
                     else{
-                    self.signed.Sign = true
-                    self.showThisView = false
+                     self.signed.Sign = true
+                    print("Signed: \(self.signed.Sign)")
                     self.selectedRole = self.roles[self.selector]
+                    if(self.selectedRole == "Ученик"){
+                        self.roleToSend = "user"
+                    }else{
+                        self.roleToSend = "admin"
+                    }
+                        
                     self.signed.Access = self.roleToSend
+                    
+                    self.showThisView.toggle()
                         }
                 }
             }) {
@@ -78,11 +86,12 @@ struct SignIn: View {
                     .cornerRadius(20.0)
                     .disabled(email.isEmpty || pass.isEmpty)
                     }
+                    //вывод ошибки
                         .alert(isPresented: $showAlert, content: {
                             Alert(title: Text("Ошибка входа"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed.Sign = false})
                         })
-                
-                
+//
+                        
             Button(action: {
                 Auth.auth().createUser(withEmail: self.email, password: self.pass){
                     (res, err) in
@@ -93,7 +102,8 @@ struct SignIn: View {
                         self.showAlert = true
                     }
                     else{
-                        
+                        self.signed.Sign = true
+                        print("Signed: \(self.signed.Sign)")
                         self.selectedRole = self.roles[self.selector]
                         if(self.selectedRole == "Ученик"){
                             self.roleToSend = "user"
@@ -102,9 +112,9 @@ struct SignIn: View {
                         }
                     let userID = Auth.auth().currentUser?.uid
                         self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.roleToSend, "surname":self.surname])
-                    self.signed.Sign = true
                     self.signed.Access = self.roleToSend
-                    self.showThisView = false
+                    
+                    self.showThisView.toggle()
                     }
                 }
                
@@ -119,11 +129,12 @@ struct SignIn: View {
                 .disabled(email.isEmpty || pass.isEmpty)
                 }
                 
+
+                        //вывод ошибки
                         .alert(isPresented: $showAlert, content: {
                             Alert(title: Text("Ошибка регистрации"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed.Sign = false})
                         })
-                
-               
+                        
                     }
                     
                 Image("account")
