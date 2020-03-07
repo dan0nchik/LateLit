@@ -20,9 +20,10 @@ struct SignIn: View {
     @State var roles = ["Ученик", "Учитель"]
     @State var selector = 0
     @State var selectedRole = ""
-    @State var roleToSend = ""
+    @Binding var role_send: String
     @Binding var showThisView: Bool
-    @ObservedObject var signed = Settings()
+    @Binding var signed_send: Bool
+    @ObservedObject var settings = Settings()
     let ref = Database.database().reference(withPath: "Users")
     var body: some View {
             
@@ -61,17 +62,21 @@ struct SignIn: View {
                         self.showAlert = true
                     }
                     else{
-                     self.signed.Sign = true
-                    print("Signed: \(self.signed.Sign)")
-                    self.selectedRole = self.roles[self.selector]
-                    if(self.selectedRole == "Ученик"){
-                        self.roleToSend = "user"
-                    }else{
-                        self.roleToSend = "admin"
-                    }
+                    self.signed_send = true
+                    self.settings.SignedIn = self.signed_send
+                    print("Signed: \(self.signed_send)")
                         
-                    self.signed.Access = self.roleToSend
-                    
+                    self.selectedRole = self.roles[self.selector]
+                    if(self.selectedRole == "Ученик")
+                    {
+                        self.role_send = "user"
+                        self.settings.Role = self.role_send
+                    }
+                    else
+                    {
+                        self.role_send = "admin"
+                        self.settings.Role = self.role_send
+                    }
                     self.showThisView.toggle()
                         }
                 }
@@ -88,7 +93,7 @@ struct SignIn: View {
                     }
                     //вывод ошибки
                         .alert(isPresented: $showAlert, content: {
-                            Alert(title: Text("Ошибка входа"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed.Sign = false})
+                            Alert(title: Text("Ошибка входа"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed_send = false})
                         })
 //
                         
@@ -100,19 +105,22 @@ struct SignIn: View {
                         print((err!.localizedDescription))
                         self.alertText = err!.localizedDescription
                         self.showAlert = true
+                        
                     }
                     else{
-                        self.signed.Sign = true
-                        print("Signed: \(self.signed.Sign)")
+                        self.signed_send = true
+                        self.settings.SignedIn = self.signed_send
+                        print("Signed: \(self.signed_send)")
                         self.selectedRole = self.roles[self.selector]
                         if(self.selectedRole == "Ученик"){
-                            self.roleToSend = "user"
+                            self.role_send = "user"
+                            self.settings.Role = self.role_send
                         }else{
-                            self.roleToSend = "admin"
+                            self.role_send = "admin"
+                            self.settings.Role = self.role_send
                         }
                     let userID = Auth.auth().currentUser?.uid
-                        self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.roleToSend, "surname":self.surname])
-                    self.signed.Access = self.roleToSend
+                        self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname])
                     
                     self.showThisView.toggle()
                     }
@@ -132,9 +140,8 @@ struct SignIn: View {
 
                         //вывод ошибки
                         .alert(isPresented: $showAlert, content: {
-                            Alert(title: Text("Ошибка регистрации"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed.Sign = false})
+                            Alert(title: Text("Ошибка регистрации"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed_send = false})
                         })
-                        
                     }
                     
                 Image("account")
@@ -150,7 +157,7 @@ struct SignIn: View {
 
 struct SignIn_Previews: PreviewProvider {
     static var previews: some View {
-        SignIn(showThisView: .constant(true))
+        SignIn(role_send: .constant(""), showThisView: .constant(true), signed_send: .constant(false))
     }
 }
 

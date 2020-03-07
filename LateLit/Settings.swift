@@ -9,12 +9,12 @@
 import Foundation
 import Firebase
 class Settings: ObservableObject {
-    @Published var Sign: Bool = UserDefaults.standard.bool(forKey: "Sign")
-    @Published var Access: String = UserDefaults.standard.string(forKey: "Access") ?? "No"
+    @Published var SignedIn: Bool = UserDefaults.standard.bool(forKey: "Sign")
+    @Published var Role: String = UserDefaults.standard.string(forKey: "Access") ?? "No"
         {
         didSet{
-            UserDefaults.standard.set(Sign, forKey: "Sign")
-            UserDefaults.standard.set(Access, forKey: "Access")
+            UserDefaults.standard.set(SignedIn, forKey: "Sign")
+            UserDefaults.standard.set(Role, forKey: "Access")
         }
     }
 }

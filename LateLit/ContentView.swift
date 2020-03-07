@@ -7,17 +7,21 @@
 //
 
 import SwiftUI
-
-
+import Firebase
+import CodableFirebase
 struct ContentView: View {
-    
-    @ObservedObject var signed = Settings()
-    @State public var showSignIn = false
+
+    @ObservedObject var settings = Settings()
+    @State private var role_fromSignIn = ""
+    @State private var signed_fromSignedIn = false
+    @State private var showSignIn = false
     var body: some View {
         NavigationView{
-            if(self.signed.Access == "user"){
+            if(self.role_fromSignIn == "user" || self.settings.Role == "user")
+            {
                 VStack
                     {
+                    
                      Spacer()
                         LateButton()
                     Spacer()
@@ -28,20 +32,33 @@ struct ContentView: View {
                     AccountImage()
                 }))
             }
-            else{
-                Text("Teacher")
+            if(self.role_fromSignIn == "admin" || self.settings.Role == "admin")
+            {
+                NavigationView{
+                    List{
+                        StudentList()
+                    }
+                }.navigationBarTitle("Сегодня")
             }
+            if(self.role_fromSignIn == "" && self.settings.Role == "No"){
+                Text("Войдите или зарегистрируйтесь!")
+                    .font(.largeTitle)
+                Image("pleaseLogIn")
+                    .resizable()
+                Spacer()
+            }
+            
         }.onAppear(perform: {
-            print("Signed: \(self.signed.Sign)")
-            if(self.signed.Sign != true){
+            if(self.settings.SignedIn != true){
                 self.showSignIn = true
             }
-            if(self.signed.Sign == true){
+            if(self.settings.SignedIn == true)
+            {
                 self.showSignIn = false
             }
             
         }).sheet(isPresented: $showSignIn, content: {
-            SignIn(showThisView: self.$showSignIn)
+            SignIn(role_send: self.$role_fromSignIn, showThisView: self.$showSignIn, signed_send: self.$signed_fromSignedIn)
         })
         
     }
@@ -88,3 +105,58 @@ struct AccountImage: View {
             .fontWeight(.medium)
     }
 }
+
+public struct Student: Codable{
+    var lesson: String
+    var name: String
+    var reason: String
+    var surname: String
+}
+
+struct StudentList: View{
+    let ref = Database.database().reference(withPath: "Users")
+    let lateList = Database.database().reference(withPath: "late_list")
+    let decoder = JSONDecoder()
+    
+    var body: some View{
+        Button(action: {self.lateList.observe(.value, with: {
+            (snapshot) in
+            guard let value = snapshot.value else {return}
+            do{
+                let model = try FirebaseDecoder().decode(Student.self, from: value)
+                print(model)
+            } catch let error{
+                print(error)
+            }
+            
+        })}, label: {Text("Print")})
+        
+//        VStack{
+//            HStack{
+//                VStack(alignment: .leading){
+//                    Text("Dan")
+//                        .font(.largeTitle)
+//                        .fontWeight(.black)
+//                    Text("Причина")
+//                        .fontWeight(.medium)
+//                    Text("Урок")
+//                        .fontWeight(.medium)
+//                }
+//            .layoutPriority(100)
+//            Spacer()
+//            }
+//        .padding()
+//        }
+//
+//    .cornerRadius(10)
+//    .overlay(
+//        RoundedRectangle(cornerRadius: 10)
+//            .stroke(Color(.black), lineWidth: 1)
+//        )
+//            .padding([.top, .horizontal])
+        
+        
+            
+        }
+    }
+
