@@ -35,10 +35,11 @@ struct ContentView: View {
             if(self.role_fromSignIn == "admin" || self.settings.Role == "admin")
             {
                 NavigationView{
-                    List{
+                    
                         StudentList()
-                    }
+                    
                 }.navigationBarTitle("Сегодня")
+                
             }
             if(self.role_fromSignIn == "" && self.settings.Role == "No"){
                 Text("Войдите или зарегистрируйтесь!")
@@ -106,7 +107,11 @@ struct AccountImage: View {
     }
 }
 
-public struct Student: Codable{
+
+
+public struct Student:Identifiable
+{
+    public var id = UUID()
     var lesson: String
     var name: String
     var reason: String
@@ -116,47 +121,68 @@ public struct Student: Codable{
 struct StudentList: View{
     let ref = Database.database().reference(withPath: "Users")
     let lateList = Database.database().reference(withPath: "late_list")
-    let decoder = JSONDecoder()
+    @State private var names: [Student] = []
     
     var body: some View{
-        Button(action: {self.lateList.observe(.value, with: {
-            (snapshot) in
-            guard let value = snapshot.value else {return}
-            do{
-                let model = try FirebaseDecoder().decode(Student.self, from: value)
-                print(model)
-            } catch let error{
-                print(error)
-            }
-            
-        })}, label: {Text("Print")})
-        
-//        VStack{
-//            HStack{
-//                VStack(alignment: .leading){
-//                    Text("Dan")
-//                        .font(.largeTitle)
-//                        .fontWeight(.black)
-//                    Text("Причина")
-//                        .fontWeight(.medium)
-//                    Text("Урок")
-//                        .fontWeight(.medium)
-//                }
-//            .layoutPriority(100)
-//            Spacer()
-//            }
-//        .padding()
-//        }
-//
-//    .cornerRadius(10)
-//    .overlay(
-//        RoundedRectangle(cornerRadius: 10)
-//            .stroke(Color(.black), lineWidth: 1)
-//        )
-//            .padding([.top, .horizontal])
-        
-        
-            
-        }
-    }
+        VStack{
+            HStack{
+            Button(action: {
+                self.lateList.observe(.value, with: { snapshot in
+                    for child in snapshot.children.allObjects as! [DataSnapshot]
+                    {
+                        for snap in child.children.allObjects as! [DataSnapshot]{
+                            //let name = snap.childSnapshot(forPath: "name").value as! String
+                            self.names.insert(Student(lesson: snap.childSnapshot(forPath: "lesson").value as! String,
+                                                      name: snap.childSnapshot(forPath: "name").value as! String,
+                                                      reason: snap.childSnapshot(forPath: "reason").value as? String ?? "Без причины",
+                                                      surname: snap.childSnapshot(forPath: "surname").value as! String), at: 0)
+                       }
 
+                    }
+                })
+                self.names.removeAll()
+
+            }, label: {Text("Обновить").bold().padding()})
+                Spacer()}
+            List
+            {
+                
+                ForEach(self.names, id: \.id){ name in
+//                    Text("Имя: \(name.name)")
+//                    //Text("фамилия: \(name.surname), урок: \(name.lesson), причина: \(name.reason )")
+                    HStack{
+                        VStack(alignment: .leading){
+                            HStack{
+                        Text("Имя: ")
+                            .bold()
+                        Text(name.name)}
+                            HStack{
+                        Text("Фамилия: ")
+                            .bold()
+                        Text(name.surname)}
+                            HStack{
+                        Text("Урок: ")
+                            .bold()
+                        Text(name.lesson)}
+                            HStack{
+                        Text("Причина: ")
+                            .bold()
+                        Text(name.reason)}
+                    }
+                        Spacer()
+                    }
+                .padding()
+                    .cornerRadius(10.0)
+                .overlay(RoundedRectangle(cornerRadius: 10)
+                .stroke(Color(.black), lineWidth: 1)
+                    )
+                
+                }
+                
+               }
+        
+        }
+}
+
+
+}
