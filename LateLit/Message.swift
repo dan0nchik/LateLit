@@ -18,6 +18,7 @@ struct Message: View {
     @State private var reason = ""
     @State private var name = " "
     @State private var surname = " "
+     @State private var group = " "
     @State private var showingAlert = false
     @State private var showingAlertAgain = true
     @Binding var showMessageView: Bool
@@ -25,26 +26,28 @@ struct Message: View {
     let lateList = Database.database().reference(withPath: "late_list")
     var body: some View {
         
-        NavigationView{
+        
             ScrollView {
         VStack{
-            Text("Отправка сообщения")
-                .font(.body)
+            
+            Text("Отправка")
+                .font(.title)
                 .bold()
-           
-            Picker(selection: $selectedSubject, label: Text("Предмет")){
+                .padding()
+            
+            Picker("    Предмет", selection: $selectedSubject, content: {
                 ForEach(0 ..< subjects.count){ index in
                     Text(self.subjects[index]).tag(index).contrast(5)
                     
                 }
-            }
+            })
             
             
-                Picker(selection: $numOfSub, label: Text("Номер урока")){
+                Picker("    Урок", selection: $numOfSub, content:{
                 ForEach(1 ..< 8){ index in
                     Text("\(index)").tag(index).contrast(5)
                 }
-                }
+                })
                
             
             TextField("Причина", text: $reason)
@@ -59,8 +62,10 @@ struct Message: View {
                     if let value = snapshot.value as? NSDictionary{
                         let nameInBase = value["name"] as? String ?? "Имя не указано"
                         let surnameInBase = value["surname"] as? String ?? "Имя не указано"
+                        let groupInBase = value["group"] as! String
                         self.name = nameInBase
                         self.surname = surnameInBase
+                        self.group = groupInBase
                     }
                     
             })
@@ -76,15 +81,18 @@ struct Message: View {
                 })
             {
                 Text("Отправить")
-                    .font(.body)
-                    .foregroundColor(.white)
-                    .background(Color("Color"))
-                    .cornerRadius(5)
+                    
+                    .fontWeight(.medium)
                     .padding()
-                    .mask(Rectangle())
-                       
-        }
-             Spacer()
+                    .background(Color("Color"))
+                    .foregroundColor(Color.white)
+                    .cornerRadius(20.0)
+                    .frame(minWidth: 0, maxWidth: .infinity)
+        }.padding([.leading, .trailing],15)
+            
+            
+            Spacer()
+            
         }
             .alert(isPresented: $showingAlert)
             {
@@ -101,7 +109,7 @@ struct Message: View {
                     
                     self.lateList.observeSingleEvent(of: .value, with: {(snapshot) in
                         if snapshot.hasChild("\(timeToString)") {
-                            self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend) \(self.subjectToSend)", "name": self.name, "reason": self.reason, "surname" : self.surname])
+                            self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend+1) \(self.subjectToSend)", "name": self.name, "reason": self.reason, "surname" : self.surname, "group" : self.group])
                         }
                         else{
                             self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend) \(self.subjectToSend)", "name": self.name, "reason": self.reason, "surname" : self.surname])
@@ -111,12 +119,11 @@ struct Message: View {
                     })
             }
     }
-        }
+        
     }
 }
-    
-    
-        
+  
+
 struct Message_Previews: PreviewProvider {
     static var previews: some View {
         Message(showMessageView: .constant(true))
@@ -125,10 +132,5 @@ struct Message_Previews: PreviewProvider {
 extension Date {
     func currentTimeMillis() -> Int64 {
         return Int64(self.timeIntervalSince1970 * 1000)
-    }
-}
-extension UIApplication {
-    func endEditing() {
-        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

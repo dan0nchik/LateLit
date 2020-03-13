@@ -18,8 +18,11 @@ struct SignIn: View {
     @State var showAlert = false
     @State var alertText: String = ""
     @State var roles = ["Ученик", "Учитель"]
-    @State var selector = 0
+    @State var _class = ["9.1", "9.2", "9.3","9.4","9.5","9.6","10.1", "10.2","10.3", "10.4", "10.5","10.6", "11.1", "11.2", "11.3", "11.4","11.5", "11.6"]
+    @State var selectorInRoles = 0
+    @State var selectorInClass = 0
     @State var selectedRole = ""
+    @State var code = ""
     @Binding var role_send: String
     @Binding var showThisView: Bool
     @Binding var signed_send: Bool
@@ -41,12 +44,21 @@ struct SignIn: View {
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         SecureField("Пароль", text: $pass)
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
-                    Picker("Роль", selection: $selector){
+                    Picker("Роль", selection: $selectorInRoles){
                         ForEach(0 ..< roles.count){
                             index in Text(self.roles[index]).tag(index)
                         }
                     }.pickerStyle(SegmentedPickerStyle())
-                    
+                if(self.roles[self.selectorInRoles] == "Ученик"){
+                    Picker("        Класс", selection: $selectorInClass){
+                        ForEach(0 ..< _class.count){
+                            index in Text(self._class[index]).tag(index).contrast(5)
+                        }
+                    }
+                }
+                else{
+                    TextField("Код доступа", text: $code).textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+                }
                     
                     HStack{
                 Button(action: {
@@ -66,7 +78,7 @@ struct SignIn: View {
                     self.settings.SignedIn = self.signed_send
                     print("Signed: \(self.signed_send)")
                         
-                    self.selectedRole = self.roles[self.selector]
+                    self.selectedRole = self.roles[self.selectorInRoles]
                     if(self.selectedRole == "Ученик")
                     {
                         self.role_send = "user"
@@ -86,10 +98,9 @@ struct SignIn: View {
                     .fontWeight(.medium)
                     .padding()
                     .background(Color("Color"))
-                    .shadow(color: Color("Color"), radius: 10)
                     .foregroundColor(Color.white)
                     .cornerRadius(20.0)
-                    .disabled(email.isEmpty || pass.isEmpty)
+                    .disabled(email.isEmpty || pass.isEmpty || code.isEmpty)
                     }
                     //вывод ошибки
                         .alert(isPresented: $showAlert, content: {
@@ -111,7 +122,7 @@ struct SignIn: View {
                         self.signed_send = true
                         self.settings.SignedIn = self.signed_send
                         print("Signed: \(self.signed_send)")
-                        self.selectedRole = self.roles[self.selector]
+                        self.selectedRole = self.roles[self.selectorInRoles]
                         if(self.selectedRole == "Ученик"){
                             self.role_send = "user"
                             self.settings.Role = self.role_send
@@ -120,8 +131,8 @@ struct SignIn: View {
                             self.settings.Role = self.role_send
                         }
                     let userID = Auth.auth().currentUser?.uid
-                        self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname])
-                    
+                        self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.selectorInClass]])
+                    print(self._class[self.selectorInClass])
                     self.showThisView.toggle()
                     }
                 }
@@ -134,14 +145,14 @@ struct SignIn: View {
                 .shadow(color: Color("Color"), radius: 10)
                 .foregroundColor(.white)
                 .cornerRadius(20.0)
-                .disabled(email.isEmpty || pass.isEmpty)
-                }
+            }.disabled(email.isEmpty || pass.isEmpty || code != "1" && self.roles[self.selectorInRoles] == "Учитель")
                 
 
                         //вывод ошибки
                         .alert(isPresented: $showAlert, content: {
                             Alert(title: Text("Ошибка регистрации"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed_send = false})
                         })
+                        
                     }
                     
                 Image("account")
