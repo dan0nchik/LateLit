@@ -8,7 +8,7 @@
 
 import SwiftUI
 import Firebase
-
+import UIKit
 struct SignIn: View {
     @State var email = ""
     @State var pass = ""
@@ -20,12 +20,14 @@ struct SignIn: View {
     @State var roles = ["Ученик", "Учитель"]
     @State var _class = ["9.1", "9.2", "9.3","9.4","9.5","9.6","10.1", "10.2","10.3", "10.4", "10.5","10.6", "11.1", "11.2", "11.3", "11.4","11.5", "11.6"]
     @State var selectorInRoles = 0
-    @State var selectorInClass = 0
+    @State var studGroupSelector = 0
+    @State var teachGroupSelector = 0
     @State var selectedRole = ""
     @State var code = ""
     @Binding var role_send: String
     @Binding var showThisView: Bool
     @Binding var signed_send: Bool
+    let url: NSURL = URL(string: "https://danielkhromov.wixsite.com/latelit/poluchit-kod-dostupa")! as NSURL
     @ObservedObject var settings = Settings()
     let ref = Database.database().reference(withPath: "Users")
     var body: some View {
@@ -50,14 +52,35 @@ struct SignIn: View {
                         }
                     }.pickerStyle(SegmentedPickerStyle())
                 if(self.roles[self.selectorInRoles] == "Ученик"){
-                    Picker("        Класс", selection: $selectorInClass){
+                    SecureField("Код доступа для ученика", text: $code).textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+                    Button(action: {
+                        
+                        UIApplication.shared.open(self.url as URL)
+                    }, label:
+                    {
+                        Text("Как получить код доступа?")
+                    })
+                    Picker("        Класс", selection: $studGroupSelector){
                         ForEach(0 ..< _class.count){
                             index in Text(self._class[index]).tag(index).contrast(5)
                         }
                     }
                 }
                 else{
-                    TextField("Код доступа", text: $code).textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+                    SecureField("Код доступа для учителя", text: $code).textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+                    Button(action: {
+                        
+                        UIApplication.shared.open(self.url as URL)
+                    }, label:
+                    {
+                        Text("Как получить код доступа?")
+                    })
+                    Picker("        Класс", selection: $teachGroupSelector){
+                        ForEach(0 ..< _class.count)
+                        {
+                            index in Text(self._class[index]).tag(index).contrast(5)
+                        }
+                    }
                 }
                     
                     HStack{
@@ -76,7 +99,6 @@ struct SignIn: View {
                     else{
                     self.signed_send = true
                     self.settings.SignedIn = self.signed_send
-                    print("Signed: \(self.signed_send)")
                         
                     self.selectedRole = self.roles[self.selectorInRoles]
                     if(self.selectedRole == "Ученик")
@@ -104,7 +126,7 @@ struct SignIn: View {
                     }
                     //вывод ошибки
                         .alert(isPresented: $showAlert, content: {
-                            Alert(title: Text("Ошибка входа"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed_send = false})
+                            Alert(title: Text("Ошибка 👇"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить")){self.signed_send = false})
                         })
 //
                         
@@ -121,7 +143,7 @@ struct SignIn: View {
                     else{
                         self.signed_send = true
                         self.settings.SignedIn = self.signed_send
-                        print("Signed: \(self.signed_send)")
+                        
                         self.selectedRole = self.roles[self.selectorInRoles]
                         if(self.selectedRole == "Ученик"){
                             self.role_send = "user"
@@ -130,9 +152,16 @@ struct SignIn: View {
                             self.role_send = "admin"
                             self.settings.Role = self.role_send
                         }
+                        
+                        if self.role_send == "admin"{
                     let userID = Auth.auth().currentUser?.uid
-                        self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.selectorInClass]])
-                    print(self._class[self.selectorInClass])
+                            self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.teachGroupSelector]])
+                            
+                        }
+                        else{
+                            let userID = Auth.auth().currentUser?.uid
+                            self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.studGroupSelector]])
+                        }
                     self.showThisView.toggle()
                     }
                 }
@@ -145,12 +174,12 @@ struct SignIn: View {
                 .shadow(color: Color("Color"), radius: 10)
                 .foregroundColor(.white)
                 .cornerRadius(20.0)
-            }.disabled(email.isEmpty || pass.isEmpty || code != "1" && self.roles[self.selectorInRoles] == "Учитель")
+            }.disabled(email.isEmpty || pass.isEmpty || code != "0457" && self.roles[self.selectorInRoles] == "Учитель" || code != "5058" && self.roles[self.selectorInRoles] == "Ученик")
                 
 
                         //вывод ошибки
                         .alert(isPresented: $showAlert, content: {
-                            Alert(title: Text("Ошибка регистрации"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить вход")){self.signed_send = false})
+                            Alert(title: Text("Ошибка 👇"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить")){self.signed_send = false})
                         })
                         
                     }
@@ -161,10 +190,12 @@ struct SignIn: View {
                  Spacer()
                 
                 
-    }
+            }
         }
     }
+        
 }
+
 
 struct SignIn_Previews: PreviewProvider {
     static var previews: some View {

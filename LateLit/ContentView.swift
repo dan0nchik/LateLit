@@ -25,6 +25,7 @@ struct ContentView: View {
                     {
                      Spacer()
                         LateButton()
+                            
                     Spacer()
                         HurryImage()
                 .navigationBarTitle("LateLit")
@@ -37,7 +38,7 @@ struct ContentView: View {
                               self.signed_fromSignedIn = false
                               self.settings.SignedIn = false
                             self.showSignIn = true
-                            print(self.signed_fromSignedIn)
+                            
                             }
                        catch let error as NSError
                         {
@@ -62,8 +63,8 @@ struct ContentView: View {
                     StudentList()
                     
                     .navigationBarTitle("Сегодня")
-                        .navigationBarItems(trailing:
-                        
+                    .navigationBarItems(trailing:
+                    
                         Button(action: {
                             if Auth.auth().currentUser != nil {
                                 do {
@@ -130,9 +131,13 @@ struct ContentView_Previews: PreviewProvider {
 }
 struct LateButton: View {
     @State public var showMessageView = false
+    @State var angle = 360.0
+    @State var spin = false
+   
     var body: some View {
         Button(action:{
             self.showMessageView = true
+            
         }) {
             Text("Я опоздаю")
                 .fontWeight(.semibold)
@@ -141,8 +146,11 @@ struct LateButton: View {
                 .background(Color("Color"))
                 .mask(Circle())
                 .shadow(color: Color("Color"), radius: 10)
-            
-        }
+                .rotationEffect(.degrees(spin ? 360 : 0))
+                .animation(Animation.spring().delay(1).repeatForever(autoreverses: false))
+        }.onAppear(perform: {
+            self.spin.toggle()
+        })
     .sheet(isPresented: $showMessageView, content: {
         Message(showMessageView: self.$showMessageView)
     })
@@ -181,24 +189,19 @@ struct StudentList: View{
     let ref = Database.database().reference(withPath: "Users")
     let lateList = Database.database().reference(withPath: "late_list")
     @State var names: [Student] = []
-    @State var namePicker = 0
-    @State var group = ["9.1", "9.2", "9.3","9.4","9.5","9.6","10.1", "10.2","10.3", "10.4", "10.5","10.6", "11.1", "11.2", "11.3", "11.4","11.5", "11.6"]
-    var name = ""
-    var lesson = ""
-    var surname = ""
-    var group1 = ""
-    var reason = ""
+    @State var teachingGroup = "."
     var body: some View{
-        VStack{
+        VStack
+            {
             
-                
-            Picker("Класс", selection: $namePicker, content: {
-                ForEach(0 ..< group.count){
-                    index in Text(self.group[index]).tag(index).contrast(5)
-                }
-            })
-                
             Button(action: {
+                let userID = Auth.auth().currentUser?.uid
+                self.ref.child(userID!).observeSingleEvent(of: .value, with: {snapshot in
+                    if let value = snapshot.value as? NSDictionary{
+                        let groupInBase = value["group"] as! String
+                        self.teachingGroup = groupInBase
+                    }
+                })
                 
                 self.lateList.observe(.value, with: { snapshot in
                     var tempArray: [Student] = []
@@ -207,65 +210,120 @@ struct StudentList: View{
                         
                         for snap in child.children.allObjects as! [DataSnapshot]
                         {
+                            if snap.childSnapshot(forPath: "group").value as? String ?? " " == self.teachingGroup
+                            {
                             
-                            tempArray.insert(Student(lesson: snap.childSnapshot(forPath: "lesson").value as? String ?? "Не указан",
-                                                          name: snap.childSnapshot(forPath: "name").value as? String ?? "Не указано",
-                                                          reason: snap.childSnapshot(forPath: "reason").value as? String ?? "Без причины",
-                                                          surname: snap.childSnapshot(forPath: "surname").value as? String ?? "Не указана", group: snap.childSnapshot(forPath: "group").value as? String ?? "Без группы"), at: 0)
+                            tempArray.insert(Student(lesson: snap.childSnapshot(forPath: "lesson").value as! String,
+                                                          name: snap.childSnapshot(forPath: "name").value as! String,
+                                                          reason: snap.childSnapshot(forPath: "reason").value as? String ?? "Не указано",
+                                                          surname: snap.childSnapshot(forPath: "surname").value as? String ?? "Не указана", group: snap.childSnapshot(forPath: "group").value as?  String ?? "No"), at: 0)
                             self.names = tempArray
-                            
                        }
-                        
+                        }
                     }
                 })
-//                self.names.removeAll()
                 
-
-            }, label: {Text("Обновить").bold().padding()
+            },
+                   label: {Text("Обновить")
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(10)
+                    .padding(.horizontal,40)
+                    
+                        
+            }).padding(.vertical, 15)
+            
+            
+            Button(action: {
+                
+                self.lateList.observe(.value, with: { snapshot in //заходит в latelit
+                
+                for child in snapshot.children.allObjects as! [DataSnapshot] //заходит в дату (19_03_20 например)
+                {
+                    
+                    for snap in child.children.allObjects as! [DataSnapshot] //заходит в подпапку даты
+                    {
+                        
+                        if snap.childSnapshot(forPath: "group").value as? String ?? " " == self.teachingGroup // удаляет если снимок (Snap) равен группе
+                        {
+                            snap.ref.removeValue()
+                        }
+                        
+                    }
+                    }
+                    
+                })
+                self.names.removeAll() //очистка моего массива внутри приложения
+                }, label: {Text("Очистить список") //как выглядит кнопка
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(10)
+                    .padding(.horizontal,40)
             })
-            
-            
-            Button(action: {self.lateList.removeValue();self.names.removeAll()
-                }, label: {Text("Очистить список")})
                 
-
-                List{
+            if(names.capacity != 0)
+            {
+                ScrollView{
                 ForEach(self.names, id: \.id){ name in
                     HStack{
                         VStack(alignment: .leading){
                             HStack{
                         Text("Имя: ")
                             .bold()
-                        Text(name.name)}
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                                Text(name.name).foregroundColor(.white)}
                             HStack{
                         Text("Фамилия: ")
                             .bold()
-                        Text(name.surname)}
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                        Text(name.surname).foregroundColor(.white)}
                             HStack{
                         Text("Группа: ")
                             .bold()
-                        Text(name.group)}
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                        Text(name.group).foregroundColor(.white)}
                             HStack{
                         Text("Урок: ")
                             .bold()
-                        Text(name.lesson)}
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                        Text(name.lesson).foregroundColor(.white)}
                             HStack{
                         Text("Причина: ")
                             .bold()
-                        Text(name.reason)}
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                        Text(name.reason).foregroundColor(.white)}
                     }
                         Spacer()
-                    }
-                .padding()
-                    .cornerRadius(10.0)
-                .overlay(RoundedRectangle(cornerRadius: 10)
-                .stroke(Color(.black), lineWidth: 1)
-                .accentColor(Color("Color"))
-                    )
-
+                    }.padding([.horizontal, .vertical], 30)
+                    
+                        .background(LinearGradient(gradient: Gradient(colors: [Color("Color2"), Color("Color3")]), startPoint: .leading, endPoint: .trailing)).cornerRadius(15).padding([.horizontal, .vertical], 15)
+                        .shadow(color: Color(.gray).opacity(0.5), radius: 5, x: 5, y: 5)
+                        
                 }
-
-               }
+                }
+               
+            }
+            
+            else{
+                Image("nice")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                Text("Пока никто не опоздал 👏")
+                .fontWeight(.medium)
+                .foregroundColor(.gray)
+            }
+            
             
         Spacer()
         }

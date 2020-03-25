@@ -9,6 +9,7 @@
 import SwiftUI
 import FirebaseDatabase
 import FirebaseAuth
+import Combine
 struct Message: View {
     var subjects = ["ООП", "Алгебра", "Биология", "География", "Английский", "ТОИ", "История", "Литература", "Обществознание", "Русский", "Технология", "Физика", "Физ-ра", "Химия"]
     @State private var selectedSubject = 0
@@ -18,12 +19,13 @@ struct Message: View {
     @State private var reason = ""
     @State private var name = " "
     @State private var surname = " "
-     @State private var group = " "
+    @State private var group = ""
     @State private var showingAlert = false
     @State private var showingAlertAgain = true
     @Binding var showMessageView: Bool
     let ref = Database.database().reference(withPath: "Users")
     let lateList = Database.database().reference(withPath: "late_list")
+    
     var body: some View {
         
         
@@ -38,7 +40,6 @@ struct Message: View {
             Picker("    Предмет", selection: $selectedSubject, content: {
                 ForEach(0 ..< subjects.count){ index in
                     Text(self.subjects[index]).tag(index).contrast(5)
-                    
                 }
             })
             
@@ -58,20 +59,18 @@ struct Message: View {
                 self.numOfSubjectToSend = self.numOfSub
                 let userID = Auth.auth().currentUser?.uid
                 self.ref.child(userID!).observeSingleEvent(of: .value, with: { (snapshot) in
-                // Get user value
+                    
                     if let value = snapshot.value as? NSDictionary{
                         let nameInBase = value["name"] as? String ?? "Имя не указано"
                         let surnameInBase = value["surname"] as? String ?? "Имя не указано"
-                        let groupInBase = value["group"] as! String
+                        let groupInBase = value["group"] as? String ?? "Не указана"
                         self.name = nameInBase
                         self.surname = surnameInBase
                         self.group = groupInBase
                     }
                     
             })
-                print(self.name)
-                print(self.surname)
-                print(self.numOfSubjectToSend+1)
+                
                 if(self.showingAlertAgain == true){
                 self.showingAlert = true
                 }
@@ -105,14 +104,16 @@ struct Message: View {
                     formatter.dateFormat = "dd_M_yyyy"
                     let timeToString = formatter.string(from: currentDate)
                     let timestamp = Date().currentTimeMillis()
-                    print(timestamp)
+                    
                     
                     self.lateList.observeSingleEvent(of: .value, with: {(snapshot) in
-                        if snapshot.hasChild("\(timeToString)") {
-                            self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend+1) \(self.subjectToSend)", "name": self.name, "reason": self.reason, "surname" : self.surname, "group" : self.group])
+                        if snapshot.hasChild("\(timeToString)")
+                        {
+                            self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend+1) \(self.subjectToSend)", "name" : self.name, "reason" : self.reason, "surname" : self.surname, "group" : self.group])
                         }
-                        else{
-                            self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend) \(self.subjectToSend)", "name": self.name, "reason": self.reason, "surname" : self.surname])
+                        else
+                        {
+                            self.lateList.child("\(timeToString)").child("/\(timestamp)").setValue(["lesson":"\(self.numOfSubjectToSend+1) \(self.subjectToSend)", "name": self.name, "reason": self.reason, "surname" : self.surname, "group" : self.group])
                         }
                     })
                      
