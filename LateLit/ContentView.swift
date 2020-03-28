@@ -15,6 +15,7 @@ struct ContentView: View {
     @State public var role_fromSignIn = ""
     @State public var signed_fromSignedIn = false
     @State public var showSignIn = false
+    
     let lateList = Database.database().reference(withPath: "late_list")
     var body: some View {
         NavigationView{
@@ -59,6 +60,7 @@ struct ContentView: View {
             }
             if(self.role_fromSignIn == "admin" || self.settings.Role == "admin")
             {
+                
                 VStack{
                     StudentList()
                     
@@ -107,6 +109,9 @@ struct ContentView: View {
             }
             
         }.onAppear(perform: {
+            
+            
+            
             if(self.settings.SignedIn != true || self.signed_fromSignedIn != true){
                 self.showSignIn = true
             }
@@ -183,136 +188,41 @@ public struct Student:Identifiable
     var reason: String
     var surname: String
     var group: String
+    var date: String
 }
 
 struct StudentList: View{
     let ref = Database.database().reference(withPath: "Users")
     let lateList = Database.database().reference(withPath: "late_list")
     @State var names: [Student] = []
+    @State var date = ""
     @State var teachingGroup = "."
+    public var cardColors: [Color] = [Color("blue"), Color("red"),Color("yellow"), Color("green"),Color("violet")]
     var body: some View{
-        VStack
+        ZStack{
+       VStack
             {
-            
-            Button(action: {
-                let userID = Auth.auth().currentUser?.uid
-                self.ref.child(userID!).observeSingleEvent(of: .value, with: {snapshot in
-                    if let value = snapshot.value as? NSDictionary{
-                        let groupInBase = value["group"] as! String
-                        self.teachingGroup = groupInBase
-                    }
-                })
-                
-                self.lateList.observe(.value, with: { snapshot in
-                    var tempArray: [Student] = []
-                    for child in snapshot.children.allObjects as! [DataSnapshot]
-                    {
-                        
-                        for snap in child.children.allObjects as! [DataSnapshot]
-                        {
-                            if snap.childSnapshot(forPath: "group").value as? String ?? " " == self.teachingGroup
-                            {
-                            
-                            tempArray.insert(Student(lesson: snap.childSnapshot(forPath: "lesson").value as! String,
-                                                          name: snap.childSnapshot(forPath: "name").value as! String,
-                                                          reason: snap.childSnapshot(forPath: "reason").value as? String ?? "Не указано",
-                                                          surname: snap.childSnapshot(forPath: "surname").value as? String ?? "Не указана", group: snap.childSnapshot(forPath: "group").value as?  String ?? "No"), at: 0)
-                            self.names = tempArray
-                       }
-                        }
-                    }
-                })
-                
-            },
-                   label: {Text("Обновить")
-                    .fontWeight(.medium)
-                    .foregroundColor(.white)
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
-                    .padding(.horizontal,40)
-                    
-                        
-            }).padding(.vertical, 15)
-            
-            
-            Button(action: {
-                
-                self.lateList.observe(.value, with: { snapshot in //заходит в latelit
-                
-                for child in snapshot.children.allObjects as! [DataSnapshot] //заходит в дату (19_03_20 например)
-                {
-                    
-                    for snap in child.children.allObjects as! [DataSnapshot] //заходит в подпапку даты
-                    {
-                        
-                        if snap.childSnapshot(forPath: "group").value as? String ?? " " == self.teachingGroup // удаляет если снимок (Snap) равен группе
-                        {
-                            snap.ref.removeValue()
-                        }
-                        
-                    }
-                    }
-                    
-                })
-                self.names.removeAll() //очистка моего массива внутри приложения
-                }, label: {Text("Очистить список") //как выглядит кнопка
-                    .fontWeight(.medium)
-                    .foregroundColor(.white)
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(10)
-                    .padding(.horizontal,40)
-            })
-                
             if(names.capacity != 0)
             {
+                
                 ScrollView{
-                ForEach(self.names, id: \.id){ name in
-                    HStack{
-                        VStack(alignment: .leading){
-                            HStack{
-                        Text("Имя: ")
-                            .bold()
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                                Text(name.name).foregroundColor(.white)}
-                            HStack{
-                        Text("Фамилия: ")
-                            .bold()
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                        Text(name.surname).foregroundColor(.white)}
-                            HStack{
-                        Text("Группа: ")
-                            .bold()
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                        Text(name.group).foregroundColor(.white)}
-                            HStack{
-                        Text("Урок: ")
-                            .bold()
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                        Text(name.lesson).foregroundColor(.white)}
-                            HStack{
-                        Text("Причина: ")
-                            .bold()
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                        Text(name.reason).foregroundColor(.white)}
-                    }
+                ForEach(self.names, id: \.id)
+                { name in
+                        HStack{
+                        VStack(alignment: .leading)
+                        {
+                            Text(name.date).fontWeight(.ultraLight).font(.title).foregroundColor(Color("black"))
+                            Text(name.surname).font(.title).bold().foregroundColor(Color("black"))
+                            Text(name.name).font(.title).bold().foregroundColor(Color("black"))
+                            Text(name.reason).font(.body).foregroundColor(Color("black"))
+                        }
                         Spacer()
-                    }.padding([.horizontal, .vertical], 30)
-                    
-                        .background(LinearGradient(gradient: Gradient(colors: [Color("Color2"), Color("Color3")]), startPoint: .leading, endPoint: .trailing)).cornerRadius(15).padding([.horizontal, .vertical], 15)
-                        .shadow(color: Color(.gray).opacity(0.5), radius: 5, x: 5, y: 5)
-                        
+                    }.padding([.horizontal, .vertical], 40)
+                            
+                    .background(Color.white.cornerRadius(15).padding([.horizontal, .vertical], 15)).shadow(color: Color(.gray).opacity(0.5), radius: 5, x: 5, y: 5)}
+                    .edgesIgnoringSafeArea(.bottom)
                 }
-                }
-               
+                
             }
             
             else{
@@ -326,7 +236,87 @@ struct StudentList: View{
             
             
         Spacer()
+                
+                HStack{
+                
+                Button(action: {
+                    
+                    self.lateList.observe(.value, with: { snapshot in //заходит в latelit
+                        
+                        for child in snapshot.children.allObjects as! [DataSnapshot] //заходит в дату (19_03_20 например)
+                        {
+                            
+                            for snap in child.children.allObjects as! [DataSnapshot] //заходит в подпапку даты
+                            {
+                                
+                                
+                                if snap.childSnapshot(forPath: "group").value as? String ?? " " == self.teachingGroup // удаляет если снимок (Snap) равен группе
+                                {
+                                    snap.ref.removeValue()
+                                }
+                                
+                            }
+                        }
+                        
+                    })
+                    self.names.removeAll() //очистка моего массива внутри приложения
+                }, label: {
+                    Image(systemName: "trash")
+                    .padding()
+                    .font(.largeTitle)
+                    .foregroundColor(Color.white)
+                    
+                    }
+               
+                )   .padding(10)
+                    .background(Color.blue)
+                    .mask(Circle())
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        let userID = Auth.auth().currentUser?.uid
+                        self.ref.child(userID!).observeSingleEvent(of: .value, with: {snapshot in
+                            if let value = snapshot.value as? NSDictionary{
+                                let groupInBase = value["group"] as! String
+                                self.teachingGroup = groupInBase
+                            }
+                        })
+                        
+                        self.lateList.observe(.value, with: { snapshot in
+                            var tempArray: [Student] = []
+                            for child in snapshot.children.allObjects as! [DataSnapshot]
+                            {
+                                self.date = child.key
+                                for snap in child.children.allObjects as! [DataSnapshot]
+                                {
+                                    if snap.childSnapshot(forPath: "group").value as? String ?? " " == self.teachingGroup
+                                    {
+                                        
+                                        tempArray.insert(Student(lesson: snap.childSnapshot(forPath: "lesson").value as! String,
+                                                                 name: snap.childSnapshot(forPath: "name").value as! String,
+                                                                 reason: snap.childSnapshot(forPath: "reason").value as? String ?? "Не указано",
+                                                                 surname: snap.childSnapshot(forPath: "surname").value as? String ?? "Не указана", group: snap.childSnapshot(forPath: "group").value as?  String ?? "No", date: self.date), at: 0)
+                                        self.names = tempArray
+                                    }
+                                }
+                            }
+                        })
+                        
+                    },
+                           label: {
+                            Image(systemName: "arrow.clockwise")
+                                .padding()
+                                .font(.largeTitle)
+                                .foregroundColor(Color.white)
+                                
+                    }
+                    )   .padding(10)
+                        .background(Color.blue)
+                        .mask(Circle())
+                }
         }
+    }
 }
 
 
