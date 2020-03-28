@@ -200,27 +200,37 @@ struct StudentList: View{
     public var cardColors: [Color] = [Color("blue"), Color("red"),Color("yellow"), Color("green"),Color("violet")]
     var body: some View{
         ZStack{
-       VStack
-            {
+       
+            
+            VStack{
             if(names.capacity != 0)
             {
                 
                 ScrollView{
                 ForEach(self.names, id: \.id)
                 { name in
+                    VStack{
                         HStack{
                         VStack(alignment: .leading)
                         {
-                            Text(name.date).fontWeight(.ultraLight).font(.title).foregroundColor(Color("black"))
-                            Text(name.surname).font(.title).bold().foregroundColor(Color("black"))
-                            Text(name.name).font(.title).bold().foregroundColor(Color("black"))
-                            Text(name.reason).font(.body).foregroundColor(Color("black"))
+                            Text(name.date).fontWeight(.ultraLight).font(.title).foregroundColor(.white)
+                            Text(name.surname).font(.title).bold().foregroundColor(.white)
+                            Text(name.name).font(.title).bold().foregroundColor(.white)
+                            Text(name.reason).font(.body).foregroundColor(.white)
                         }
+                        
                         Spacer()
-                    }.padding([.horizontal, .vertical], 40)
                             
-                    .background(Color.white.cornerRadius(15).padding([.horizontal, .vertical], 15)).shadow(color: Color(.gray).opacity(0.5), radius: 5, x: 5, y: 5)}
-                    .edgesIgnoringSafeArea(.bottom)
+                    }
+                    .padding(15)
+                    
+                    .background(Color("violet"))
+                    }
+                            .cornerRadius(20)
+                            .padding([.top, .horizontal])
+                            .shadow(color: Color("violet").opacity(0.5), radius: 5, x: 10, y: 10)
+                    }
+                 
                 }
                 
             }
@@ -232,12 +242,15 @@ struct StudentList: View{
                 Text("Пока никто не опоздал 👏")
                 .fontWeight(.medium)
                 .foregroundColor(.gray)
+                Spacer()
+            }
+                
             }
             
-            
-        Spacer()
-                
-                HStack{
+        
+            VStack{
+            Spacer()
+            HStack(alignment: .bottom){
                 
                 Button(action: {
                     
@@ -264,13 +277,13 @@ struct StudentList: View{
                     Image(systemName: "trash")
                     .padding()
                     .font(.largeTitle)
-                    .foregroundColor(Color.white)
-                    
+                    .foregroundColor(Color("violet"))
                     }
                
                 )   .padding(10)
-                    .background(Color.blue)
+                    .background(Color.white)
                     .mask(Circle())
+                    .shadow(color: Color(.lightGray).opacity(0.5), radius: 5, x: 3, y: 3)
                     
                     Spacer()
                     
@@ -308,14 +321,16 @@ struct StudentList: View{
                             Image(systemName: "arrow.clockwise")
                                 .padding()
                                 .font(.largeTitle)
-                                .foregroundColor(Color.white)
+                                .foregroundColor(Color("violet"))
                                 
                     }
                     )   .padding(10)
-                        .background(Color.blue)
+                        .background(Color.white)
                         .mask(Circle())
-                }
-        }
+                        .shadow(color: Color(.lightGray).opacity(0.5), radius: 5, x: 3, y: 3)
+                }.padding(15)
+            }
+        
     }
 }
 
