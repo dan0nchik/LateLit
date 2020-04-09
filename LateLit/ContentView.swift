@@ -8,7 +8,6 @@
 
 import SwiftUI
 import Firebase
-import CodableFirebase
 struct ContentView: View {
 
     @ObservedObject var settings = Settings()

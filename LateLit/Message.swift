@@ -101,7 +101,7 @@ struct Message: View {
                     //format date
                     let currentDate = Date()
                     let formatter = DateFormatter()
-                    formatter.dateFormat = "dd_M_yyyy"
+                    formatter.dateFormat = "d_M_yyyy"
                     let timeToString = formatter.string(from: currentDate)
                     let timestamp = Date().currentTimeMillis()
                     
