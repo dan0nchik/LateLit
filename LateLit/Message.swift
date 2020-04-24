@@ -98,7 +98,6 @@ struct Message: View {
                 Alert(title: Text("Отправить?"), message: Text("Нажмите отправить еще раз и все проверьте"), dismissButton: .default(Text("OK")){
                     self.showingAlert = false
                     self.showingAlertAgain = false
-                    //format date
                     let currentDate = Date()
                     let formatter = DateFormatter()
                     formatter.dateFormat = "d_M_yyyy"
