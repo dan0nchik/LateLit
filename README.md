@@ -15,5 +15,3 @@ view reports in a comfortable way
 [Support](https://danielkhromov.wixsite.com/latelit/podderzhka)
 
 [Website](https://danielkhromov.wixsite.com/latelit)
-
-Hello world!
