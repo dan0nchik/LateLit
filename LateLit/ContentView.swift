@@ -12,8 +12,6 @@ struct ContentView: View {
 
     @ObservedObject var settings = Settings()
     @State public var role_fromSignIn = ""
-    @State public var signed_fromSignedIn = false
-    @State public var showSignIn = false
     
     @EnvironmentObject var session: SessionStore
     
@@ -45,9 +43,6 @@ struct ContentView: View {
                               try Auth.auth().signOut()
                               self.role_fromSignIn = ""
                                 self.settings.Role = "No"
-                              self.signed_fromSignedIn = false
-                              self.settings.SignedIn = false
-                            self.showSignIn = true
                             
                             }
                        catch let error as NSError
@@ -82,9 +77,6 @@ struct ContentView: View {
                                     try Auth.auth().signOut()
                                     self.role_fromSignIn = ""
                                     self.settings.Role = "No"
-                                    self.signed_fromSignedIn = false
-                                    self.settings.SignedIn = false
-                                    self.showSignIn = true
                                 }
                                 catch let error as NSError
                                 {

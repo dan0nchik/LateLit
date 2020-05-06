@@ -45,14 +45,48 @@ struct SignIn: View {
         }
     }
     
+    
+    func signUp(){
+        session.signUp(email: email, password: pass){
+            (result, error) in
+            if let error = error{
+                self.alertText =  error.localizedDescription
+            }
+            else{
+                self.email = ""
+                self.pass = ""
+            }
+        }
+    }
+    
     var body: some View {
-            
+        NavigationView{
         ScrollView{
             VStack {
                 
-        Text("Вход]")
-        .font(.largeTitle)
-        .bold()
+                HStack{
+                    Image("lit")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .clipShape(Circle())
+                    .shadow(radius: 10)
+                    .padding()
+                    
+                    
+                    Text("&").bold().font(.title).padding()
+                    
+                    Image("logo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .clipShape(Circle())
+                    .shadow(radius: 10)
+                    .padding()
+                    
+                }
+        TextField("Имя", text: $name)
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+        TextField("Фамилия", text: $surname)
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         TextField("Email", text: $email)
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         SecureField("Пароль", text: $pass)
@@ -65,6 +99,7 @@ struct SignIn: View {
                 if(self.roles[self.selectorInRoles] == "Ученик"){
                     SecureField("Код доступа для ученика", text: $code).textFieldStyle(RoundedBorderTextFieldStyle()).padding()
                     Button(action: {
+                        
                         UIApplication.shared.open(self.url as URL)
                     }, label:
                     {
@@ -93,6 +128,7 @@ struct SignIn: View {
                     }
                 }
                     
+                HStack{
                 Button(action: {
                     
                     self.signIn()
@@ -123,21 +159,50 @@ struct SignIn: View {
                         .alert(isPresented: $showAlert, content: {
                             Alert(title: Text("Ошибка 👇"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить")))
                         })
-//
+                                    
+                
+                    Button(action: {
+                            
+                        self.signUp()
+                        let userID = Auth.auth().currentUser?.uid
+                        self.selectedRole = self.roles[self.selectorInRoles]
+                        if(self.selectedRole == "Ученик"){
+                            self.role_send = "user"
+                            self.settings.Role = self.role_send
+                            self.ref.child(userID!).setValue(["email" : self.email , "name": self.name , "role": self.role_send , "surname": self.surname , "group" : self._class[self.studGroupSelector]])
+                        }
+                        else{
+                            self.role_send = "admin"
+                            self.settings.Role = self.role_send
+                            self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.teachGroupSelector]])
+                        }
                         
-            
-                Image("account")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    }) {
+                        
+                        Text("Зарегистрироваться")
+                            .fontWeight(.medium)
+                            .padding()
+                            .background(Color("Color"))
+                            .foregroundColor(Color.white)
+                            .cornerRadius(20.0)
+                            .disabled(email.isEmpty || pass.isEmpty || code.isEmpty)
+                            }
+                            //вывод ошибки
+                                .alert(isPresented: $showAlert, content: {
+                                    Alert(title: Text("Ошибка 👇"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить")))
+                                })
+                        
+                }
                  Spacer()
                 
                 
             }
         }
+        .navigationBarTitle("Вход/регистрация")
     }
         
 }
-
+}
 
 struct SignIn_Previews: PreviewProvider {
     static var previews: some View {
