@@ -46,19 +46,6 @@ struct SignIn: View {
     }
     
     
-    func signUp(){
-        session.signUp(email: email, password: pass){
-            (result, error) in
-            if let error = error{
-                self.alertText =  error.localizedDescription
-            }
-            else{
-                self.email = ""
-                self.pass = ""
-            }
-        }
-    }
-    
     var body: some View {
         NavigationView{
         ScrollView{
@@ -163,7 +150,16 @@ struct SignIn: View {
                 
                     Button(action: {
                             
-                        self.signUp()
+                        self.session.signUp(email: self.email, password: self.pass){
+                            (result, error) in
+                            if let error = error{
+                                self.alertText =  error.localizedDescription
+                                self.showAlert = true
+                            }
+                            else{
+                          
+                            
+                        
                         let userID = Auth.auth().currentUser?.uid
                         self.selectedRole = self.roles[self.selectorInRoles]
                         if(self.selectedRole == "Ученик"){
@@ -176,7 +172,8 @@ struct SignIn: View {
                             self.settings.Role = self.role_send
                             self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.teachGroupSelector]])
                         }
-                        
+                            }
+                        }
                     }) {
                         
                         Text("Зарегистрироваться")
