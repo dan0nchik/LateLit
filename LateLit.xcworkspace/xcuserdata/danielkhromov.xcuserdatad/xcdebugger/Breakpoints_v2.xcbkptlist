@@ -3,4 +3,114 @@
    uuid = "CFB873A7-B4A3-47D6-85BA-84273D6B8B36"
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F2B3D346-FCD8-47EA-A214-C222A8850B4E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LateLit/SignUp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "13"
+            endingLineNumber = "13"
+            landmarkName = "SignUp"
+            landmarkType = "14">
+            <Locations>
+               <Location
+                  uuid = "F2B3D346-FCD8-47EA-A214-C222A8850B4E - 35098f194a4d7217"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "property wrapper backing initializer of LateLit.SignUp.email : Swift.String"
+                  moduleName = "LateLit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielkhromov/LateLit/LateLit/SignUp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "13"
+                  endingLineNumber = "13"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "F2B3D346-FCD8-47EA-A214-C222A8850B4E - d3f04e24aa4b3021"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LateLit.SignUp.email.getter : Swift.String"
+                  moduleName = "LateLit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielkhromov/LateLit/LateLit/SignUp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "13"
+                  endingLineNumber = "13"
+                  offsetFromSymbolStart = "168">
+               </Location>
+               <Location
+                  uuid = "F2B3D346-FCD8-47EA-A214-C222A8850B4E - 2b33992f953dd0dd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LateLit.SignUp.email.setter : Swift.String"
+                  moduleName = "LateLit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielkhromov/LateLit/LateLit/SignUp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "13"
+                  endingLineNumber = "13"
+                  offsetFromSymbolStart = "276">
+               </Location>
+               <Location
+                  uuid = "F2B3D346-FCD8-47EA-A214-C222A8850B4E - ed11af1b75ea782c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LateLit.SignUp.email.modify : Swift.String"
+                  moduleName = "LateLit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielkhromov/LateLit/LateLit/SignUp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  uuid = "F2B3D346-FCD8-47EA-A214-C222A8850B4E - 9b1122fbc9d59edd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LateLit.SignUp.email.modify : Swift.String with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "LateLit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielkhromov/LateLit/LateLit/SignUp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "13"
+                  endingLineNumber = "13"
+                  offsetFromSymbolStart = "32">
+               </Location>
+               <Location
+                  uuid = "F2B3D346-FCD8-47EA-A214-C222A8850B4E - e4f35f92b1d47ce5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LateLit.SignUp.$email.getter : SwiftUI.Binding&lt;Swift.String&gt;"
+                  moduleName = "LateLit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielkhromov/LateLit/LateLit/SignUp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "13"
+                  endingLineNumber = "13"
+                  offsetFromSymbolStart = "184">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

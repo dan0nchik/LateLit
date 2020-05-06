@@ -15,9 +15,19 @@ struct ContentView: View {
     @State public var signed_fromSignedIn = false
     @State public var showSignIn = false
     
+    @EnvironmentObject var session: SessionStore
+    
+    func getUser(){
+        session.listen()
+    }
+    
     let lateList = Database.database().reference(withPath: "late_list")
     var body: some View {
+        Group{
+            if session.session != nil
+            {
         NavigationView{
+            
             if(self.role_fromSignIn == "user" || self.settings.Role == "user")
             {
                     
@@ -98,30 +108,13 @@ struct ContentView: View {
                 }
         
             }
-            if(self.role_fromSignIn == "" || self.settings.Role == "No" ){
-                Text("Войдите или зарегистрируйтесь!")
-                    .font(.largeTitle)
-                Image("pleaseLogIn")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                
+            
+        }
             }
-            
-        }.onAppear(perform: {
-            
-            
-            
-            if(self.settings.SignedIn != true || self.signed_fromSignedIn != true){
-                self.showSignIn = true
+            else{
+                SignIn(role_send: self.$role_fromSignIn)
             }
-            if(self.settings.SignedIn == true || self.signed_fromSignedIn == true)
-            {
-                self.showSignIn = false
-            }
-            
-        }).sheet(isPresented: $showSignIn, content: {
-            SignIn(role_send: self.$role_fromSignIn, showThisView: self.$showSignIn, signed_send: self.$signed_fromSignedIn)
-        })
+        }.onAppear(perform: getUser)
         
     }
 }
@@ -130,7 +123,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(SessionStore())
     }
 }
 struct LateButton: View {

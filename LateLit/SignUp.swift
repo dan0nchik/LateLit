@@ -1,15 +1,15 @@
 //
-//  Account.swift
+//  SignUp.swift
 //  LateLit
 //
-//  Created by Daniel Khromov on 2/11/20.
+//  Created by Daniel Khromov on 5/6/20.
 //  Copyright © 2020 Daniel Khromov. All rights reserved.
 //
 
 import SwiftUI
 import Firebase
 import UIKit
-struct SignIn: View {
+struct SignUp: View {
     @State var email = ""
     @State var pass = ""
     @State var name = ""
@@ -27,16 +27,13 @@ struct SignIn: View {
     @Binding var role_send: String
     let url: NSURL = URL(string: "https://danielkhromov.wixsite.com/latelit/poluchit-kod-dostupa")! as NSURL
     @ObservedObject var settings = Settings()
-    let ref = Database.database().reference(withPath: "Users")
     
     @EnvironmentObject var session: SessionStore
-    
-    func signIn(){
-        session.signIn(email: email, password: pass){
+    func signUp(){
+        session.signUp(email: email, password: pass){
             (result, error) in
             if let error = error{
-                self.alertText = error.localizedDescription
-                self.showAlert = true
+                print(error.localizedDescription)
             }
             else{
                 self.email = ""
@@ -45,14 +42,17 @@ struct SignIn: View {
         }
     }
     
+    let ref = Database.database().reference(withPath: "Users")
     var body: some View {
-            
-        ScrollView{
             VStack {
                 
-        Text("Вход]")
+        Text("Регистрация")
         .font(.largeTitle)
         .bold()
+        TextField("Имя", text: $name)
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
+        TextField("Фамилия", text: $surname)
+            .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         TextField("Email", text: $email)
             .textFieldStyle(RoundedBorderTextFieldStyle()).padding()
         SecureField("Пароль", text: $pass)
@@ -65,6 +65,7 @@ struct SignIn: View {
                 if(self.roles[self.selectorInRoles] == "Ученик"){
                     SecureField("Код доступа для ученика", text: $code).textFieldStyle(RoundedBorderTextFieldStyle()).padding()
                     Button(action: {
+                        
                         UIApplication.shared.open(self.url as URL)
                     }, label:
                     {
@@ -93,55 +94,49 @@ struct SignIn: View {
                     }
                 }
                     
-                Button(action: {
-                    
-                    self.signIn()
-                        
-                    self.selectedRole = self.roles[self.selectorInRoles]
-                    if(self.selectedRole == "Ученик")
-                    {
-                        self.role_send = "user"
-                        self.settings.Role = self.role_send
-                    }
-                    else
-                    {
-                        self.role_send = "admin"
-                        self.settings.Role = self.role_send
-                    }
                 
+            Button(action: {
+                    self.signUp()
+                        self.selectedRole = self.roles[self.selectorInRoles]
+                        if(self.selectedRole == "Ученик"){
+                            self.role_send = "user"
+                            self.settings.Role = self.role_send
+                            
+                            let userID = Auth.auth().currentUser?.uid
+                            self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.studGroupSelector]])
+                        }
+                        else{
+                            self.role_send = "admin"
+                            self.settings.Role = self.role_send
+                            
+                            let userID = Auth.auth().currentUser?.uid
+                            self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.teachGroupSelector]])
+                        }
             }) {
-                
-                Text("Войти")
+                Text("Зарегистрироваться")
                     .fontWeight(.medium)
-                    .padding()
-                    .background(Color("Color"))
-                    .foregroundColor(Color.white)
-                    .cornerRadius(20.0)
-                    .disabled(email.isEmpty || pass.isEmpty || code.isEmpty)
-                    }
-                    //вывод ошибки
-                        .alert(isPresented: $showAlert, content: {
-                            Alert(title: Text("Ошибка 👇"), message: Text("\(alertText)"), dismissButton: .default(Text("Повторить")))
-                        })
-//
-                        
-            
-                Image("account")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                .padding()
+                .background(Color("Color"))
+                .shadow(color: Color("Color"), radius: 10)
+                .foregroundColor(.white)
+                .cornerRadius(20.0)
+            }.disabled(email.isEmpty || pass.isEmpty || code != "0457" && self.roles[self.selectorInRoles] == "Учитель" || code != "5058" && self.roles[self.selectorInRoles] == "Ученик")
+  
+//                Image("account")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
                  Spacer()
                 
                 
-            }
+            
         }
-    }
+    
         
 }
-
-
-struct SignIn_Previews: PreviewProvider {
-    static var previews: some View {
-        SignIn(role_send: .constant(""))
-    }
 }
 
+struct SignUp_Previews: PreviewProvider {
+    static var previews: some View {
+        SignUp(role_send: .constant("")).environmentObject(SessionStore())
+    }
+}
