@@ -30,6 +30,7 @@
 		692C4BCC23F0AF7B00086D6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		692C4BD223F0AF7B00086D6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		692C4BD423F0AF7B00086D6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		692C875224632E0600D805E6 /* LateLit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LateLit.entitlements; sourceTree = "<group>"; };
 		697296CF23F327FD0093B640 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		69CD35B023F427AD009CAEF5 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		69F82C7523F4123B00A12E67 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -71,6 +72,7 @@
 		692C4BC523F0AF7A00086D6C /* LateLit */ = {
 			isa = PBXGroup;
 			children = (
+				692C875224632E0600D805E6 /* LateLit.entitlements */,
 				692C4BC623F0AF7A00086D6C /* AppDelegate.swift */,
 				692C4BC823F0AF7A00086D6C /* SceneDelegate.swift */,
 				692C4BCA23F0AF7A00086D6C /* ContentView.swift */,
@@ -361,6 +363,7 @@
 			baseConfigurationReference = 99334024EE5B35BA78DCC49A /* Pods-LateLit.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = LateLit/LateLit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = CQT34X72YN;
@@ -371,7 +374,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.8;
 				PRODUCT_BUNDLE_IDENTIFIER = danonchik.LateLit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -384,6 +387,7 @@
 			baseConfigurationReference = B5EF18E0E98FDE04E03719AA /* Pods-LateLit.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = LateLit/LateLit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = CQT34X72YN;
@@ -394,7 +398,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.8;
 				PRODUCT_BUNDLE_IDENTIFIER = danonchik.LateLit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

@@ -6,7 +6,7 @@ target 'LateLit' do
   use_frameworks!
 pod 'Firebase/Auth'
 pod 'Firebase/Database'
-pod 'CodableFirebase'
+pod 'Firebase/Messaging'
 # add pods for any other desired Firebase products
 # https://firebase.google.com/docs/ios/setup#available-pods
 
