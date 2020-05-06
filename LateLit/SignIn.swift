@@ -157,8 +157,6 @@ struct SignIn: View {
                                 self.showAlert = true
                             }
                             else{
-                          
-                            
                         
                         let userID = Auth.auth().currentUser?.uid
                         self.selectedRole = self.roles[self.selectorInRoles]
@@ -172,6 +170,21 @@ struct SignIn: View {
                             self.settings.Role = self.role_send
                             self.ref.child(userID!).setValue(["email" : self.email, "name": self.name, "role": self.role_send, "surname":self.surname, "group" : self._class[self.teachGroupSelector]])
                         }
+                                
+                                
+                                let user = Auth.auth().currentUser
+                                switch user!.isEmailVerified {
+                                case true:
+                                    print("email verified")
+                                case false:
+                                    user!.sendEmailVerification{
+                                        (error) in
+                                        guard error != nil else{
+                                            return print("email sent")
+                                        }
+                                    }
+                                
+                                }
                             }
                         }
                     }) {
